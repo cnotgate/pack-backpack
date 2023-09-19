@@ -330,23 +330,23 @@ JSON menggunakan sintaks seperti object javascript (key value pair). JSON menggu
 
 ### HTML
 
-![Alt text](/pack_backpack/md_img/postmanhtml.png)
+![Alt text](/pack_backpack/assets/postmanhtml.png)
 
 ### XML
 
-![Alt text](/pack_backpack/md_img/postmanxml.png)
+![Alt text](/pack_backpack/assets/postmanxml.png)
 
 ### JSON
 
-![Alt text](/pack_backpack/md_img/postmanjson.png)
+![Alt text](/pack_backpack/assets/postmanjson.png)
 
 ### XML by id
 
-![Alt text](/pack_backpack/md_img/postmanxmlid.png)
+![Alt text](/pack_backpack/assets/postmanxmlid.png)
 
 ### JSON by id
 
-![Alt text](/pack_backpack/md_img/postmanjsonid.png)
+![Alt text](/pack_backpack/assets/postmanjsonid.png)
 
 ---
 
