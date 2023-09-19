@@ -326,6 +326,9 @@ XML menggunakan sintaks yang kurang lebih sama seperti HTML. XML menggunakan nes
 
 JSON menggunakan sintaks seperti object javascript (key value pair). JSON menggunakan nested object untuk mendefinisikan hirarki. Kita tidak bisa menambahkan comment pada JSON.
 
+## Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?
+Karena JSON di-support oleh banyak bahasa dan framework, ringan, dan human readable. JSON terintegrasi dengan Javascript (Bahasa yang populer digunakan untuk web development). JSON secara performa parsing juga lebih cepat jika dibandingkan dengan XML.
+
 ## Screenshot Postman
 
 ### HTML
