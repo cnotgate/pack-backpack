@@ -4,7 +4,7 @@ from django.db import models
 class Item(models.Model):
     RARITIES = [
         ("Common", "Common"),
-        ("Uncommon", "Common"),
+        ("Uncommon", "Uncommon"),
         ("Rare", "Rare"),
         ("Very rare", "Very rare"),
         ("Epic", "Epic"),

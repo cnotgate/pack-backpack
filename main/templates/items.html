@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Amount</th>
+    <th>Rarity</th>
+    <th>Description</th>
+  </tr>
+
+  {% for item in items %}
+  <tr>
+    <td>{{item.name}}</td>
+    <td>{{item.amount}}</td>
+    <td class="{{item.rarity}}">{{item.rarity}}</td>
+    <td>{{item.description}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+    table-layout: fixed;
+  }
+
+  td {
+    width: 10em;
+  }
+
+  .Common {
+    color: gray;
+  }
+
+  .Uncommon {
+    color: green;
+  }
+
+  .Rare {
+    color: blue;
+  }
+
+  .VeryRare {
+    color: violet;
+  }
+
+  .Epic {
+    color: orange;
+  }
+
+  .Legendary {
+    color: orangered;
+  }
+</style>
+
+{% endblock content %}

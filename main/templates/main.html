@@ -1,13 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Pack's Backpack</title>
-	</head>
-	<body>
-		<h1>Pack's Backpack</h1>
-		<p>Nama: {{ name }}</p>
-		<p>Kelas: {{ class }}</p>
-	</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Pack's Backpack</h1>
+
+<h4>Name: {{name}}</h4>
+
+<h4>Class: {{class}}</h4>
+
+<h4>Item(s) in your backpack: {{count}}</h4>
+
+{% include 'items.html' %}
+
+<br>
+
+<a href="{% url 'main:add_item' %}">
+  <button>
+    Add New Item to Backpack
+  </button>
+</a>
+
+{% endblock content %}
