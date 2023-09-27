@@ -2,7 +2,451 @@
 
 ---
 
-# Tugas 2
+# Tugas 4
+
+- [x] Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna untuk mengakses aplikasi sebelumnya dengan lancar.
+
+- [x] Membuat dua akun pengguna dengan masing-masing tiga dummy data menggunakan model yang telah dibuat pada aplikasi sebelumnya untuk setiap akun di lokal.
+
+- [x] Menghubungkan model Item dengan User.
+
+- [x] Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last login pada halaman utama aplikasi.
+
+- [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+
+  - [ ] Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?
+
+  - [ ] Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?
+
+  - [ ] Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?
+
+  - [ ] Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?
+
+  - [ ] Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+## Pengimplementasian Checklist
+
+### Membuat fitur registrasi, login, dan logout
+
+- Membuat file HTML baru pada `main/templates` dengan nama `register.html` yang berisi:
+
+  ```html
+  {% extends 'base.html' %}
+
+  {% block meta %}
+  <title>Register</title>
+  {% endblock meta %}
+
+  {% block content %}
+
+  <div class="login">
+
+    <h1>Register</h1>
+
+    <form method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td><input type="submit" name="submit" value="Register" /></td>
+        </tr>
+      </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+  </div>
+
+  {% endblock content %}
+  ```
+
+- Membuat file HTML baru pada `main/templates` dengan nama `login.html` yang berisi:
+
+  ```html
+  {% extends 'base.html' %}
+
+  {% block meta %}
+  <title>Login</title>
+  {% endblock meta %}
+
+  {% block content %}
+
+  <div class="login">
+
+    <h1>Login</h1>
+
+    <form method="POST" action="">
+      {% csrf_token %}
+      <table>
+        <tr>
+          <td>Username: </td>
+          <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+        </tr>
+
+        <tr>
+          <td>Password: </td>
+          <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+        </tr>
+
+        <tr>
+          <td></td>
+          <td><input class="btn login_btn" type="submit" value="Login"></td>
+        </tr>
+      </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    New user? <a href="{% url 'main:register' %}">Register</a>
+
+  </div>
+
+  {% endblock content %}
+  ```
+
+- Menambahkan kode berikut pada `main.html` di bawah tombol untuk add item
+
+  ```html
+  ...
+  <br>
+
+  <a href="{% url 'main:logout' %}">
+    <button>
+      Logout
+    </button>
+  </a>
+  ...
+  ```
+
+- Import beberapa module berikut pada `main/views.py`
+
+```python
+from django.shortcuts import redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+```
+
+- Membuat fungsi-fungsi `register`, `login_user`, dan `logout_user` pada `main/views.py`
+
+```python
+def register(request):
+  form = UserCreationForm()
+
+  if request.method == "POST":
+      form = UserCreationForm(request.POST)
+      if form.is_valid():
+          form.save()
+          messages.success(
+              request, 'Your account has been successfully created!')
+          return redirect('main:login')
+  context = {'form': form}
+  return render(request, 'register.html', context)
+
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('main:show_main')
+        else:
+            messages.info(
+                request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, 'login.html', context)
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
+
+```
+
+- Import `register`, `login_user`, `logout_user` pada `main/urls.py`
+
+- Menambahkan routing untuk fitur-fitur tersebut pada `main/urls.py` dalam `urlpatterns`
+
+```python
+...
+path('register/', register, name='register'),
+path('login/', login_user, name='login'),
+path('logout/', logout_user, name='logout'),
+...
+```
+
+- Restriksi akses ke halaman utama
+
+  - Import module berikut
+
+  ```python
+  from django.contrib.auth.decorators import login_required
+  ```
+
+  - Tambahkan kode berikut *tepat* di atas fungsi `show_main`
+
+  ```python
+  @login_required(login_url='/login')
+  ```
+
+### Menghubungkan model Item dengan User
+
+- Import module berikut pada `main/models.py`
+
+```python
+from django.contrib.auth.models import User
+```
+
+- Tambahkan kode berikut pada class `Item`
+
+```python
+class Item(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+
+- Pada `main/views.py` tambahkan kode berikut pada fungsi `add_item`
+
+```python
+def add_item(request):
+ form = ProductForm(request.POST or None)
+
+ if form.is_valid() and request.method == "POST":
+     product = form.save(commit=False)
+     product.user = request.user
+     product.save()
+     return HttpResponseRedirect(reverse('main:show_main'))
+ ...
+```
+
+- Ubah fungsi `show_main` sebagai berikut
+
+```python
+def show_main(request):
+    items = Item.objects.filter(user=request.user)
+    ...
+...
+```
+
+- Lakukan migrasi model dengan perintah
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Membuat dua akun pengguna dengan masing-masing tiga dummy data untuk setiap akun
+
+- Jalankan server Django dengan perintah `python manage.py runserver`
+
+- Mengunjungi `http://127.0.0.1:8000` pada browser. Kita secara otomatis akan diarahkan ke laman login.
+
+- Klik link `Register`
+
+- Isi Username dengan `user1`
+
+- Isi password dengan `8RhJk-B8uuEG65-`
+
+- Isi kembali password untuk konfirmasi
+
+- Klik tombol `Register`
+
+- Mengulangi proses yang sama untuk mendaftarkan akun ke-2 dengan username `user2` dan password `xXX_GdFNt_Ma7ef`
+
+- Tambahkan tiga data dummy untuk `user1`
+
+- Tambahkan tiga data dummy untuk `user2`
+
+### Menampilkan detail informasi pengguna yang sedang logged in dan last login
+
+- Ubah `main.html` sebagai berikut
+
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Pack's Backpack</h1>
+
+<h4>Username: {{name}}</h4>
+
+<h4>Item(s) in your backpack: {{count}}</h4>
+
+{% include 'items.html' %}
+
+<br>
+
+<a href="{% url 'main:add_item' %}">
+  <button>
+    Add New Item to Backpack
+  </button>
+</a>
+
+<br>
+
+<a href="{% url 'main:logout' %}">
+  <button>
+    Logout
+  </button>
+</a>
+
+{% endblock content %}
+```
+
+- Ubah fungsi `show_main` sebagai berikut
+
+```python
+def show_main(request):
+    items = Item.objects.filter(user=request.user)
+    context = {
+        'name': request.user.username,
+    ...
+...
+```
+
+> Kode di atas berguna untuk menampilkan username dari pengguna yang sedang logged in.
+
+- Pada `main/views.py` import module `datetime`
+
+- Ubah fungsi `login_user` sebagai berikut:
+
+```python
+...
+if user is not None:
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main")) 
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
+...
+```
+
+> Kode di atas berguna untuk menambahkan cookies bernama `last_login` yang menyimpan kapan terakhir kali pengguna tersebut login.
+
+- Pada fungsi `show_main` pada variabel `context` tambahkan kode berikut
+
+```python
+...
+'last_login': request.COOKIES['last_login'],
+...
+```
+
+- Ubah fungsi `logout_user` menjadi berikut
+
+```python
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+
+- Pada `main.html` tambahkan kode berikut di antara tabel dan tombol add item
+
+```html
+...
+<h5>Last login: {{ last_login }}</h5>
+...
+```
+
+### Pengerjaan bonus
+
+- Tambahkan kode berikut pada `main/views.py`
+
+```python
+def increment(request, id):
+    items = Item.objects.filter(user=request.user)
+    item = Item.objects.get(pk=id)
+    if item in items:
+        item.amount = item.amount+1
+        item.save()
+        return redirect('main:show_main')
+
+
+def decrement(request, id):
+    items = Item.objects.filter(user=request.user)
+    item = Item.objects.get(pk=id)
+    if item in items:
+        if (item.amount == 1):
+            item.delete()
+        else:
+            item.amount = item.amount - 1
+        item.save()
+        return redirect('main:show_main')
+
+
+def delete(request, id):
+    items = Item.objects.filter(user=request.user)
+    item = Item.objects.get(pk=id)
+    if item in items:
+        item = Item.objects.filter(pk=id)
+        item.delete()
+        return redirect('main:show_main')
+```
+
+- Pada `items.html` tambahkan kode berikut setelah `<td>{{item.description}}</td>`
+
+```html
+<td>
+  <button>
+    <a href="/decrement/{{item.pk}}">-</a>
+  </button>
+  <button>
+    <a href="/increment/{{item.pk}}">+</a>
+  </button>
+  <button>
+    <a href="/delete/{{item.pk}}">
+      Delete item
+    </a>
+  </button>
+</td>
+```
+
+- Pada `main/urls.py` import `delete`, `increment`, dan `decrement`, lalu tambahkan path kepada masing-masing views
+
+```python
+...
+path('delete/<int:id>/', delete, name='delete'),
+path('increment/<int:id>/', increment, name='increment'),
+path('decrement/<int:id>/', decrement, name='decrement'),
+...
+```
+
+## Django UserCreationForm
+
+UserCreationForm adalah module bawaan dari Django yang berfungsi untuk menghandle pembuatan user dan autentikasi user.
+
+Kelebihannya adalah kita tidak harus membuat program dari awal untuk membuat sistem autentikasi user.
+
+Kekurangannya adalah kita tidak bisa customize field dari user pada saat pendaftaran (misal: no. hp), dan menambahkan 2FA.
+
+## Autentikasi vs Otorisasi
+
+Autentikasi adalah proses untuk menentukan siapa kita.
+
+Otorisasi adalah proses untuk menentukan apakah kita bisa mengakses sesuatu.
+
+## Cookies
+
+Cookies adalah penyimpanan pada browser yang pada django digunakan untuk menyimpan `session_id` dan data-data kecil lain. Cookies `session_id` digunakan oleh django untuk mengidentifikasi siapa user yang sedang mengakses web tersebut, dan data apa saja yang harus di-serve kepada user tersebut.
+
+## Risiko penggunaan cookies
+
+Terdapat risiko cookie hijacking, dimana seseorang dapat mencuri cookie user, termasuk `session_id` yang dapat digunakan oleh orang jahat untuk mengakses web sebagai user.
+
+# Tugas 3
 
 - [x] Membuat input form untuk menambahkan objek model pada app sebelumnya.
 - [x] Tambahkan 5 fungsi views untuk melihat objek yang sudah ditambahkan dalam format HTML, XML, JSON, XML by ID, dan JSON by ID.
@@ -353,7 +797,7 @@ Karena JSON di-support oleh banyak bahasa dan framework, ringan, dan human reada
 
 ---
 
-# Tugas 1
+# Tugas 2
 
 - [x] Membuat sebuah proyek Django baru.
 - [x] Membuat aplikasi dengan nama main pada proyek tersebut.

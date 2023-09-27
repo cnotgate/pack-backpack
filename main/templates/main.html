@@ -3,9 +3,7 @@
 {% block content %}
 <h1>Pack's Backpack</h1>
 
-<h4>Name: {{name}}</h4>
-
-<h4>Class: {{class}}</h4>
+<h4>Username: {{name}}</h4>
 
 <h4>Item(s) in your backpack: {{count}}</h4>
 
@@ -13,9 +11,20 @@
 
 <br>
 
+<h5>Last login: {{ last_login }}</h5>
+
 <a href="{% url 'main:add_item' %}">
   <button>
     Add New Item to Backpack
+  </button>
+</a>
+
+
+<br>
+
+<a href="{% url 'main:logout' %}">
+  <button>
+    Logout
   </button>
 </a>
 

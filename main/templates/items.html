@@ -8,14 +8,28 @@
     <th>Amount</th>
     <th>Rarity</th>
     <th>Description</th>
+    <th>Action</th>
   </tr>
 
   {% for item in items %}
-  <tr>
+  <tr id="{{item.pk}}">
     <td>{{item.name}}</td>
     <td>{{item.amount}}</td>
     <td class="{{item.rarity}}">{{item.rarity}}</td>
     <td>{{item.description}}</td>
+    <td>
+      <button>
+        <a href="/decrement/{{item.pk}}">-</a>
+      </button>
+      <button>
+        <a href="/increment/{{item.pk}}">+</a>
+      </button>
+      <button>
+        <a href="/delete/{{item.pk}}">
+          Delete item
+        </a>
+      </button>
+    </td>
   </tr>
   {% endfor %}
 </table>
