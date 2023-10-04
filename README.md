@@ -4,14 +4,14 @@
 
 # Tugas 5
 
-- [] Kustomisasi halaman login, register, dan tambah inventori semenarik mungkin.
-- [] Kustomisasi halaman daftar inventori menjadi lebih berwarna maupun menggunakan apporach lain seperti menggunakan Card.
-- [] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
-  - [] Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.
-  - [] Jelaskan HTML5 Tag yang kamu ketahui.
-  - [] Jelaskan perbedaan antara margin dan padding.
-  - [] Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?
-- [] Melakukan add-commit-push ke GitHub.
+- [x] Kustomisasi halaman login, register, dan tambah inventori semenarik mungkin.
+- [x] Kustomisasi halaman daftar inventori menjadi lebih berwarna maupun menggunakan apporach lain seperti menggunakan Card.
+- [x] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+  - [x] Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.
+  - [x] Jelaskan HTML5 Tag yang kamu ketahui.
+  - [x] Jelaskan perbedaan antara margin dan padding.
+  - [x] Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?
+- [x] Melakukan add-commit-push ke GitHub.
 
 ## Pengimplementasian Checklist
 
