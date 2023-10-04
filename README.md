@@ -2,6 +2,366 @@
 
 ---
 
+# Tugas 5
+
+- [] Kustomisasi halaman login, register, dan tambah inventori semenarik mungkin.
+- [] Kustomisasi halaman daftar inventori menjadi lebih berwarna maupun menggunakan apporach lain seperti menggunakan Card.
+- [] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+  - [] Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.
+  - [] Jelaskan HTML5 Tag yang kamu ketahui.
+  - [] Jelaskan perbedaan antara margin dan padding.
+  - [] Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?
+- [] Melakukan add-commit-push ke GitHub.
+
+## Pengimplementasian Checklist
+
+### Prerequisite
+
+- Menambahkan Bootstrap ke dalam `base.html` pada bagian `head`
+
+```html
+<head>
+  {% block meta %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% endblock meta %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+J4jsl5c9zdLKaUk5Ae5f5b1bw6AUn5f5v8FZJoMxm6f5cH1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+</head>
+```
+
+- Menambahkan kode berikut untuk membuat navbar pada awal body `main.html`
+
+```html
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <p class="navbar-brand" href="#">Pack's Backpack</p>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <p class="nav-link active" href="#">{{name}}</p>
+        </li>
+        <li class="nav-item">
+          <p class="nav-link active" href="#">{{class}}</p>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active text-danger " aria-current="page" href="/logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+- Menghapus logout button yang dulu dibuat pada `main.html`, karena sudah digantikan dengan logout button pada navbar
+
+- Edit kode pada `main.html` menjadi seperti ini
+
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+
+...
+<h5 class="d-flex justify-content-center">Item(s) in your backpack: {{count}}</h5>
+
+{% include 'items.html' %}
+
+<br>
+
+<p class="d-flex justify-content-center">Last login: {{ last_login }}</p>
+
+<div class="d-flex justify-content-center">
+  <a href="{% url 'main:add_item' %}">
+    <button class="btn btn-primary">
+      Add New Item to Backpack
+    </button>
+  </a>
+
+</div>
+...
+```
+
+### Kustomisasi halaman login, register, dan tambah inventori semenarik mungkin
+
+Di sini saya menggunakan class `login d-flex justify-content-center` untuk membuat komponen berada di tengah layar. Saya juga menggunakan class `btn btn-primary` untuk mengubah tambilan button menjadi lebih menarik.
+
+- Mengubah `login.html` menjadi seperti berikut untuk mengubah layout menjadi center dan button menjadi lebih menarik.
+
+```html
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class="login">
+
+  <h1 class="login d-flex justify-content-center">Login</h1>
+  <div class="login d-flex justify-content-center">
+    <form method="POST" action="">
+      {% csrf_token %}
+      <table>
+        <tr>
+          <td>Username: </td>
+          <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+        </tr>
+
+        <tr>
+          <td>Password: </td>
+          <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+        </tr>
+
+        <tr>
+          <td></td>
+          <td><button class="btn btn-primary" type="submit">Login</button></td>
+
+          <!-- <td><input class="btn login_btn" type="submit" value="Login"></td> -->
+        </tr>
+      </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+  </div>
+  <div class="login d-flex justify-content-center">
+
+    New user? <a href="{% url 'main:register' %}">Register</a>
+  </div>
+</div>
+
+{% endblock content %}
+```
+
+- Mengubah `register.html` menjadi seperti berikut untuk mengubah layout menjadi center dan button menjadi lebih menarik.
+
+```html
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class="login">
+
+  <h2 class="d-flex justify-content-center">Register</h2>
+  <div class="d-flex justify-content-center">
+    <form method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td><input class="btn btn-primary" type="submit" name="submit" value="Register" /></td>
+        </tr>
+      </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock content %}
+```
+
+- Mengubah `add_item.html` menjadi seperti berikut untuk mengubah layout menjadi center dan button menjadi lebih menarik.
+
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="d-flex justify-content-center">Add New Product</h2>
+
+<div class="d-flex justify-content-center">
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td>
+          <input class="btn btn-primary" type="submit" value="Add Product" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}
+```
+
+### Kustomisasi halaman daftar inventori menjadi lebih berwarna
+
+- Pada `items.html`, wrap tag `<div>` pada `<table>`, lalu tambahkan class `d-flex justify-content-center` agar table berada di tengah layar.
+
+- Pada button action tambahkan class `btn btn-secondary btn-sm` agar button menjadi lebih menarik.
+
+- Tambahkan kode berikut pada `items.html` yang berfungsi untuk styling tabel dan pewarnaan teks berdasarkan rarity.
+
+```html
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  a {
+    text-decoration:
+      none;
+  }
+
+  td {
+    width:
+      10em;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .Common {
+    color:
+      gray;
+  }
+
+  .Uncommon {
+    color:
+      green;
+  }
+
+  .Rare {
+    color:
+      blue;
+  }
+
+  .Very {
+    color:
+      violet;
+  }
+
+  .Epic {
+    color:
+      orange;
+  }
+
+  .Legendary {
+    color:
+      orangered;
+  }
+</style>
+```
+
+### Pengerjaan bonus
+
+- Menambahkan kode berikut dalam tag `<style>` di `items.html`
+
+```html
+<style>
+...
+tr:nth-last-child(1) {
+    color:
+      black;
+    background-color:
+      burlywood;
+  }
+...
+</style>
+```
+
+## Manfaat setiap element selector
+
+Element selector berguna untuk memeberikan styling khusus untuk elemen yang kita pilih saja, sehingga tidak mengganggu atau mengubah styling dari elemen lain.
+
+Digunakan jika kita ingin memberikan styling khusus untuk elemen-elemen yang kita select saja.
+
+## HTML5 tag yang saya ketahui
+
+- ```<head>```
+
+Tag ini digunakan untuk men-define bagian dokumen yang berisi informasi dari dokumen html tersebut.
+
+- ```<div>```
+
+Tag ini digunakan sebagai container atau untuk menampung tag-tag lain.
+
+- ```<br/>```
+
+Tag ini digunakan untuk memberikan line break.
+
+- ```<a>```
+
+Tag ini digunakan untuk menambahkan link.
+
+- ```<p>```
+
+Tag ini digunakan untuk men-define paragraf
+
+- ```<h1>, <h2>, <h3>, ... , <h6>```
+
+Tag ini digunakan untuk menambahkan header. Semakin besar angkanya, semakin kecil headernya.
+
+## Perbedaan margin dan padding
+
+Margin memberikan sekat/jarak di luar dari komponen.
+padding memberikan sekat/jarak di dalam komponen.
+
+Contohnya pada button, jika kita menggunakan padding, maka ukuran dari button tersebut akan berubah sesuai padding yan gkita berikan. Sedangkan jika kita menggunakan margin, ukuran button tersebut tidak berubah, tetapi komponen-komponen yang berada di samping button tersebut akan menjauh sesuai jarak margin yang kita berikan.
+
+## Bootstrap vs Tailwind
+
+- Bootstrap
+
+  - Pada bootstrap, styling untuk tampilan komponen-komponen sudah jadi, sehingga tinggal digunakan oleh user.
+
+  - Bootstrap memiliki file yang lebih besar, sehingga memengaruhi load time dari website jika internet user lamban.
+
+  - Bootstrap lebih ramah pemula karena terdapat banyak styling komponen yang sudah jadi, sehingga user tinggal memakai saja, tanpa harus styling sendiri.
+
+- Tailwind
+
+  - pada tailwind tampilan dibangun dengan class-class yang telah didefinisikan sebelumnya oleh Tailwind
+
+  - File tailwind lebih kecil jika dibandingkan dengan bootstrap
+
+  - Tailwind memerlukan pemahaman yang cukup dalam terhadap class-class yang disediakan, sehingga tidak ramah untuk pemula.
+
+Bootstrap dipakai jika kita proyek yang kita kerjakan time constrained.
+
+Tailwind dipakai jika proyek yang kita kerjakan menuntut kode dan file yang seminimal mungkin.
+
 # Tugas 4
 
 - [x] Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna untuk mengakses aplikasi sebelumnya dengan lancar.

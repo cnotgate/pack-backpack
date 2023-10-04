@@ -2,37 +2,43 @@
 
 {% block content %}
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Amount</th>
-    <th>Rarity</th>
-    <th>Description</th>
-    <th>Action</th>
-  </tr>
+<div class="d-flex justify-content-center">
+  <table>
+    <tr class="center">
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Rarity</th>
+      <th>Description</th>
+      <th>Action</th>
+    </tr>
 
-  {% for item in items %}
-  <tr id="{{item.pk}}">
-    <td>{{item.name}}</td>
-    <td>{{item.amount}}</td>
-    <td class="{{item.rarity}}">{{item.rarity}}</td>
-    <td>{{item.description}}</td>
-    <td>
-      <button>
-        <a href="/decrement/{{item.pk}}">-</a>
-      </button>
-      <button>
-        <a href="/increment/{{item.pk}}">+</a>
-      </button>
-      <button>
-        <a href="/delete/{{item.pk}}">
-          Delete item
+    {% for item in items %}
+    <tr id="{{item.pk}}">
+      <td class="center">{{item.name}}</td>
+      <td class="center">{{item.amount}}</td>
+      <td class="{{item.rarity}} center">{{item.rarity}}</td>
+      <td>{{item.description}}</td>
+      <td class="center">
+        <a href="/decrement/{{item.pk}}">
+          <button class="btn btn-secondary btn-sm">
+            -
+          </button>
         </a>
-      </button>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+        <a href="/increment/{{item.pk}}">
+          <button class="btn btn-secondary btn-sm">
+            +
+          </button>
+        </a>
+        <a href="/delete/{{item.pk}}">
+          <button class="btn btn-secondary btn-sm">
+            Delete item
+          </button>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 
 <style>
   table,
@@ -40,37 +46,61 @@
   td {
     border: 1px solid black;
     border-collapse: collapse;
-    text-align: center;
     table-layout: fixed;
   }
 
+  a {
+    text-decoration:
+      none;
+  }
+
   td {
-    width: 10em;
+    width:
+      10em;
+  }
+
+  .center {
+    text-align: center;
   }
 
   .Common {
-    color: gray;
+    color:
+      gray;
   }
 
   .Uncommon {
-    color: green;
+    color:
+      green;
   }
 
   .Rare {
-    color: blue;
+    color:
+      blue;
   }
 
-  .VeryRare {
-    color: violet;
+  .Very {
+    color:
+      violet;
   }
 
   .Epic {
-    color: orange;
+    color:
+      orange;
   }
 
   .Legendary {
-    color: orangered;
+    color:
+      orangered;
+  }
+
+  tr:nth-last-child(1) {
+    color:
+      black;
+    background-color:
+      burlywood;
   }
 </style>
+
+
 
 {% endblock content %}
