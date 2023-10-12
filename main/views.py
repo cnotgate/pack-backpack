@@ -11,6 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -20,13 +21,26 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/login')
 def show_main(request):
     items = Item.objects.filter(user=request.user)
-    context = {
-        'name': request.user.username,
-        'class': 'PBP B',
-        'items': items,
-        'count': items.count(),
-        'last_login': request.COOKIES['last_login'],
-    }
+    try:
+        context = {
+            'name': request.user.username,
+            'class': 'PBP B',
+            'items': items,
+            'count': items.count(),
+            'last_login': request.COOKIES['last_login'],
+        }
+    except KeyError:
+        date = datetime.datetime.now()
+        response = HttpResponseRedirect(reverse("main:show_main"))
+        response.set_cookie('last_login', str(
+            date.strftime("%d %B, %Y, %H:%M")))
+        context = {
+            'name': request.user.username,
+            'class': 'PBP B',
+            'items': items,
+            'count': items.count(),
+            'last_login': request.COOKIES['last_login'],
+        }
 
     return render(request, "main.html", context)
 
@@ -46,6 +60,23 @@ def add_item(request):
     return render(request, "add_item.html", context)
 
 
+@csrf_exempt
+def add_item_ajax(request):
+    if request.method == 'POST':
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        rarity = request.POST.get("rarity")
+        description = request.POST.get("description")
+        user = request.user
+        newItem = Item(name=name, amount=amount, rarity=rarity,
+                       description=description, user=user)
+        newItem.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
+
 def show_items_html(request):
     items = Item.objects.all()
     context = {'items': items}
@@ -53,22 +84,22 @@ def show_items_html(request):
 
 
 def show_items_xml(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("xml", items), content_type="application/xml")
 
 
 def show_items_xml_by_id(request, id):
-    item = Item.objects.filter(pk=id)
+    item = Item.objects.filter(pk=id, user=request.user)
     return HttpResponse(serializers.serialize("xml", item), content_type="application/xml")
 
 
 def show_items_json_by_id(request, id):
-    item = Item.objects.filter(pk=id)
+    item = Item.objects.filter(pk=id, user=request.user)
     return HttpResponse(serializers.serialize("json", item), content_type="application/json")
 
 
 def show_items_json(request):
-    items = Item.objects.all()
+    items = Item.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", items), content_type="application/json")
 
 
@@ -94,7 +125,9 @@ def login_user(request):
         if user is not None:
             login(request, user)
             response = HttpResponseRedirect(reverse("main:show_main"))
-            response.set_cookie('last_login', str(datetime.datetime.now()))
+            date = datetime.datetime.now()
+            response.set_cookie('last_login', str(
+                date.strftime("%d %B, %Y, %H:%M")))
             return response
         else:
             messages.info(

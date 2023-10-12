@@ -15,4 +15,4 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     amount = models.IntegerField(default=1)
     rarity = models.CharField(max_length=9, choices=RARITIES)
-    description = models.TextField(blank=True)
+    description = models.TextField(default='-')

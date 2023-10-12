@@ -2,6 +2,7 @@
 
 {% block content %}
 
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <p class="navbar-brand" href="#">Pack's Backpack</p>
@@ -25,23 +26,77 @@
   </div>
 </nav>
 
-<h5 class="d-flex justify-content-center">Item(s) in your backpack: {{count}}</h5>
-
-{% include 'items.html' %}
-
 <br>
 
 <p class="d-flex justify-content-center">Last login: {{ last_login }}</p>
+<h5 class="d-flex justify-content-center">Item(s) in your backpack: {{count}}</h5>
 
 <div class="d-flex justify-content-center">
-  <a href="{% url 'main:add_item' %}">
-    <button class="btn btn-primary">
-      Add New Item to Backpack
-    </button>
-  </a>
-
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_item_modal"
+    id="add_item_button">Add new Item</button>
 </div>
 
+<br>
 
+{% include 'items.html' %}
+
+<div class="modal fade" id="add_item_modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form" onsubmit="return false;">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" id="name" name="name"></input>
+          </div>
+          <div class="mb-3">
+            <label for="amount" class="col-form-label">Amount:</label>
+            <input type="number" class="form-control" id="amount" name="amount"></input>
+          </div>
+          <div class="mb-3">
+            <label for="rarity" class="col-form-label">Rarity:</label>
+            <select class="form-select" name="rarity">
+              <option value="Common">Common</option>
+              <option value="Uncommon">Uncommon</option>
+              <option value="Rare">Rare</option>
+              <option value="Very rare">Very rare</option>
+              <option value="Epic">Epic</option>
+              <option value="Legendary">Legendary</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="col-form-label">Description:</label>
+            <textarea class="form-control" id="description" name="description"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function addItem() {
+    fetch("{% url 'main:add_item_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#form'))
+    }).then(refreshItems)
+
+    document.getElementById("form").reset()
+    return false
+  }
+
+  document.getElementById("button_add").onclick = addItem
+
+</script>
 
 {% endblock content %}

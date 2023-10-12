@@ -3,61 +3,27 @@
 {% block content %}
 
 <div class="d-flex justify-content-center">
-  <table>
-    <tr class="center">
-      <th>Name</th>
-      <th>Amount</th>
-      <th>Rarity</th>
-      <th>Description</th>
-      <th>Action</th>
-    </tr>
-
-    {% for item in items %}
-    <tr id="{{item.pk}}">
-      <td class="center">{{item.name}}</td>
-      <td class="center">{{item.amount}}</td>
-      <td class="{{item.rarity}} center">{{item.rarity}}</td>
-      <td>{{item.description}}</td>
-      <td class="center">
-        <a href="/decrement/{{item.pk}}">
-          <button class="btn btn-secondary btn-sm">
-            -
-          </button>
-        </a>
-        <a href="/increment/{{item.pk}}">
-          <button class="btn btn-secondary btn-sm">
-            +
-          </button>
-        </a>
-        <a href="/delete/{{item.pk}}">
-          <button class="btn btn-secondary btn-sm">
-            Delete item
-          </button>
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+  <div class="container justify-content-center">
+    <div class="row justify-content-center" id="item_cards"></div>
+  </div>
 </div>
 
 <style>
-  table,
-  th,
-  td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
-
   a {
-    text-decoration:
-      none;
+    text-decoration: none;
   }
 
   td {
     width:
       10em;
   }
+
+  h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
 
   .center {
     text-align: center;
@@ -93,13 +59,71 @@
       orangered;
   }
 
-  tr:nth-last-child(1) {
+  .last-card {
     color:
       black;
     background-color:
       burlywood;
   }
 </style>
+
+<script>
+
+
+  async function incrementItem(id) {
+    fetch(`/increment/${id}`).then(refreshItems)
+  }
+
+  async function decrementItem(id) {
+    fetch(`/decrement/${id}`).then(refreshItems)
+  }
+
+  async function deleteItem(id) {
+    fetch(`/delete/${id}`).then(refreshItems)
+  }
+
+  async function getItems() {
+    return fetch("{% url 'main:show_items_json' %}").then((res) => res.json())
+  }
+
+  async function refreshItems() {
+    const items = await getItems()
+    let htmlString = ""
+    items.forEach((item) => {
+      if (item === items[items.length - 1]) {
+        htmlString += `\n<div class="card col-md-5 m-md-1 last-card" style="max-width: 14rem;" class="${item.fields.rarity}">`
+      } else {
+        htmlString += `\n<div class="card col-md-5 m-md-1" style="max-width: 14rem;" class="${item.fields.rarity}">`
+      }
+      htmlString += `<div class="card-body">
+            <h5 class="card-title">${item.fields.name}</h5>
+            <h6 class="card-subtitle" id="${item.pk}">Amount: ${item.fields.amount}x</h6>
+            <h6 class="card-subtitle ${item.fields.rarity}">${item.fields.rarity}</h6>
+            <p class="card-text">${item.fields.description}</p>
+            <a onClick="decrementItem(${item.pk})">
+              <button class="btn btn-secondary btn-sm">
+                -
+              </button>
+            </a>
+            <a onClick="incrementItem(${item.pk})">
+              <button class="btn btn-secondary btn-sm">
+                +
+              </button>
+            </a>
+            <a onClick="deleteItem(${item.pk})">
+              <button class="btn btn-secondary btn-sm">
+                Delete
+              </button>
+            </a>
+          </div>
+        </div>`
+    })
+
+    document.getElementById("item_cards").innerHTML = htmlString
+  }
+
+  refreshItems()
+</script>
 
 
 
